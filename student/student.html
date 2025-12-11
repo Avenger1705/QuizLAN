@@ -1,1 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+  <meta charset="UTF-8" />
+  <title>Student - Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/style/style.css" />
+  <link rel="stylesheet" href="/style/no-double-scrollbar.css" />
+  <link rel="stylesheet" href="/style/answers.css" />
+  <link rel="stylesheet" href="/style/student-kahoot.css" />
+  <link rel="stylesheet" href="/style/feedback.css" />
+  <link rel="stylesheet" href="/style/scoreboard.css" />
+  <link rel="stylesheet" href="/style/scoreboard-fix.css" />
+  <link rel="stylesheet" href="/style/student2.css" />
+  
+</head>
+
+<body class="student-page">
+  <h1 class="title">Joined the Game</h1>
+  <section class="card" id="joinSection">
+    <label>Your name:</label>
+    <input id="nameInput" type="text" placeholder="Your name" />
+    <label>Game PIN:</label>
+    <input id="pinInput" type="text" placeholder="123456" />
+    <button id="joinBtn" class="btn primary" type="button">Continue</button>
+    <div id="status" class="status"></div>
+  </section>
+
+  <!-- Timer ili 3al isar -->
+  <div id="timeIndicator" class="player-indicator left" style="display: none;">
+    <div id="timeValue" class="time-value">20</div>
+  </div>
+
+  <!-- question placa -->
+  <div id="questionZone" class="question-container" style="display: none;">
+    <div class="question-box">
+      <h2 id="qText" class="question-text"></h2>
+      <img id="questionImage" class="question-image" style="display: none;" />
+    </div>
+    <div id="answers" class="answers-grid"></div>
+  </div>
+
+  
+  <div id="scoreDisplay" class="score-display" style="display: none;"></div>
+
+  <div id="resultMessage" class="result-message" style="display: none;"></div>
+
+  <div id="waitingOverlay" class="avatar-overlay hidden">
+    <div class="avatar-container">
+      <h2>Waiting for your teacher…</h2>
+      <p>You're in the game. Stay on this page, the quiz will start soon 🚀</p>
+      <button id="quitBtn" class="btn warn" type="button" style="margin-top: 12px;">
+        Quit game
+      </button>
+    </div>
+  </div>
+
+  <div id="avatarOverlay" class="avatar-overlay">
+    <div class="avatar-container">
+      <h2 class="avatar-title">Pick your avatar! 🎨</h2>
+      <p class="avatar-subtitle">Your avatar appears the moment you join the game.</p>
+      <p class="avatar-subtitle">Choose the one you like the most — then get ready to play!</p>
+      <p class="avatar-warning">⚠️ You cannot change your avatar later, so pick wisely!</p>
+      <div class="avatar-grid">
+        <div class="avatar-option" data-avatar="funny">
+          <span class="avatar-emoji">🐸</span>
+          <span class="avatar-label">Funny</span>
+        </div>
+        <div class="avatar-option" data-avatar="cute">
+          <span class="avatar-emoji">🐱</span>
+          <span class="avatar-label">Cute</span>
+        </div>
+        <div class="avatar-option" data-avatar="mysterious">
+          <span class="avatar-emoji">🔥</span>
+          <span class="avatar-label">Mysterious</span>
+        </div>
+        <div class="avatar-option" data-avatar="smart">
+          <span class="avatar-emoji">🧠</span>
+          <span class="avatar-label">Smart</span>
+        </div>
+        <div class="avatar-option" data-avatar="cool">
+          <span class="avatar-emoji">😎</span>
+          <span class="avatar-label">Cool</span>
+        </div>
+        <div class="avatar-option" data-avatar="ninja">
+          <span class="avatar-emoji">🥷</span>
+          <span class="avatar-label">Ninja</span>
+        </div>
+        <div class="avatar-option" data-avatar="robot">
+          <span class="avatar-emoji">🤖</span>
+          <span class="avatar-label">Robot</span>
+        </div>
+        <div class="avatar-option" data-avatar="alien">
+          <span class="avatar-emoji">👽</span>
+          <span class="avatar-label">Alien</span>
+        </div>
+        <div class="avatar-option" data-avatar="wizard">
+          <span class="avatar-emoji">🧙</span>
+          <span class="avatar-label">Wizard</span>
+        </div>
+        <div class="avatar-option" data-avatar="unicorn">
+          <span class="avatar-emoji">🦄</span>
+          <span class="avatar-label">Unicorn</span>
+        </div>
+        <div class="avatar-option" data-avatar="lion">
+          <span class="avatar-emoji">🦁</span>
+          <span class="avatar-label">Brave</span>
+        </div>
+        <div class="avatar-option" data-avatar="ghost">
+          <span class="avatar-emoji">👻</span>
+          <span class="avatar-label">Spooky</span>
+        </div>
+        <div class="avatar-option" data-avatar="panda">
+          <span class="avatar-emoji">🐼</span>
+          <span class="avatar-label">Chill</span>
+        </div>
+        <div class="avatar-option" data-avatar="rocket">
+          <span class="avatar-emoji">🚀</span>
+          <span class="avatar-label">Speedy</span>
+        </div>
+        <div class="avatar-option" data-avatar="star">
+          <span class="avatar-emoji">⭐</span>
+          <span class="avatar-label">Star</span>
+        </div>
+        <div class="avatar-option" data-avatar="crown">
+          <span class="avatar-emoji">👑</span>
+          <span class="avatar-label">Royal</span>
+        </div>
+        <div class="avatar-option" data-avatar="dragon">
+          <span class="avatar-emoji">🐲</span>
+          <span class="avatar-label">Legend</span>
+        </div>
+        <div class="avatar-option" data-avatar="fox">
+          <span class="avatar-emoji">🦊</span>
+          <span class="avatar-label">Clever</span>
+        </div>
+        <div class="avatar-option" data-avatar="bear">
+          <span class="avatar-emoji">🐻</span>
+          <span class="avatar-label">Strong</span>
+        </div>
+        <div class="avatar-option" data-avatar="koala">
+          <span class="avatar-emoji">🐨</span>
+          <span class="avatar-label">Relaxed</span>
+        </div>
+      </div>
+      <button id="avatarBackBtn" class="avatar-back-btn">← Go Back</button>
+    </div>
+  </div>
+
+  <div id="confirmQuitModal" class="modal hidden" style="z-index: 10000;">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content confirm-modal">
+      <div class="confirm-icon">🚪</div>
+      <h2>Quit Game?</h2>
+      <p class="confirm-message">Are you sure you want to leave this game? Your progress will be lost.</p>
+      <div class="confirm-actions">
+        <button id="confirmQuitYes" class="btn warn" type="button">Yes, Quit Game</button>
+        <button id="confirmQuitNo" class="btn secondary" type="button">Stay in Game</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="answerFeedback" class="answer-feedback-overlay">
+    <div class="feedback-content">
+      <div id="feedbackIcon" class="feedback-icon"></div>
+      <div id="feedbackMessage" class="feedback-message"></div>
+      <div id="feedbackSubmessage" class="feedback-submessage"></div>
+      <div id="feedbackPoints" class="feedback-points"></div>
+      <div id="feedbackTimeLeft" style="font-size: 2.5rem; font-weight: 900; color: white; margin-top: 20px;"></div>
+      <div class="feedback-waiting">Waiting for other players...</div>
+    </div>
+  </div>
+
+  <div id="scoreboardOverlay" class="scoreboard-overlay">
+    <div class="scoreboard-container">
+      <div class="scoreboard-header">
+        <h1 class="scoreboard-title">Leaderboard</h1>
+        <p class="scoreboard-subtitle">See how you rank!</p>
+      </div>
+      <div id="scoreboardList" class="scoreboard-list"></div>
+
+      <div style="text-align: center; margin-top: 32px;">
+        <button id="quitGameBtn" class="btn warn" style="font-size: 1.1rem; padding: 14px 32px; display: none;">
+          🚪 Quit Game
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="podiumOverlay" class="podium-overlay">
+
+    <div id="podiumContainer" class="podium-container"></div>
+    <div id="yourPosition" class="your-position"></div>
+  </div>
+
+  <script src="/student/student.js"></script>
+</body>
+
+</html>
