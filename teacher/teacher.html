@@ -1,1 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+  <meta charset="UTF-8" />
+  <title>Teacher Lobby - Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/style/style.css" />
+  <link rel="stylesheet" href="/style/no-double-scrollbar.css" />
+  <link rel="stylesheet" href="/style/quiz-selection.css" />
+  <link rel="stylesheet" href="/style/toast.css" />
+  <link rel="stylesheet" href="/style/tabs.css" />
+  <link rel="stylesheet" href="/style/scoreboard.css" />
+  <link rel="stylesheet" href="/style/answers.css" />
+  <link rel="stylesheet" href="/style/student-kahoot.css" />
+  <link rel="stylesheet" href="/style/history.css" />
+  <link rel="stylesheet" href="/style/bulk-operations.css" />
+  <link rel="stylesheet" href="/style/lobby-redesign.css" />
+  <link rel="stylesheet" href="/style/scoreboard-fix.css" />
+</head>
+
+<body class="teacher-page">
+  <div id="quizSelectionScreen" class="quiz-selection-screen">
+    <div class="selection-container">
+      <div class="selection-header">
+        <h1 class="selection-title">🎯 Choose a Quiz to Host</h1>
+        <p class="selection-subtitle">Select a quiz from your library to start a new game session</p>
+      </div>
+      <div id="selectionSearchContainer" class="selection-search-container">
+        <div class="selection-search-wrapper">
+          <span class="selection-search-icon">🔍</span>
+          <input type="text" id="quizSearchInput" class="selection-search-input"
+            placeholder="Search by quiz title or number of questions..." />
+          <button id="clearSearchBtn" class="selection-search-clear hidden">×</button>
+        </div>
+        <div id="searchSuggestions" class="search-suggestions hidden"></div>
+      </div>
+
+      <div id="bulkActionsBar" class="bulk-actions-bar hidden">
+        <div class="bulk-actions-info">
+          <span id="selectedCount">0</span> quiz<span id="selectedPlural">zes</span> selected
+        </div>
+        <div class="bulk-actions-buttons">
+          <button id="selectAllBtn" class="btn small secondary">Select All</button>
+          <button id="exportSelectedBtn" class="btn small primary">📥 Export</button>
+          <button id="deleteSelectedBtn" class="btn small warn">🗑️ Delete</button>
+          <button id="clearSelectionBtn" class="btn small secondary">Clear</button>
+        </div>
+      </div>
+
+      <div id="selectionQuizGrid" class="selection-quiz-grid">
+      </div>
+      <div class="selection-footer">
+        <button id="selectionNewQuizBtn" class="btn secondary" type="button">
+          <span>➕</span> Create New Quiz
+        </button>
+        <button id="selectionImportBtn" class="btn secondary" type="button">
+          <span>📥</span> Import Quiz
+        </button>
+        <button id="viewHistoryBtn" class="btn secondary" type="button">
+          <span>📊</span> View History
+        </button>
+        <input id="importFile" type="file" accept="application/json" style="display:none;">
+      </div>
+    </div>
+  </div>
+
+  <div class="app-shell hidden" id="gameLobbyScreen">
+    <header class="topbar lobby-banner">
+      <div class="pin-box">
+        <div class="pin-left">
+          <div class="pin-subtitle">Join from the student page</div>
+          <div class="pin-subtitle-small">On the same Wi-Fi network</div>
+        </div>
+        <div id="pinCodeWrapper" class="pin-center pin-code-wrapper" title="Click to copy PIN">
+          <div class="pin-label">Game PIN</div>
+          <div id="pinCode" class="pin-code">------</div>
+          <span id="pinTooltip" class="pin-tooltip">Click to copy to clipboard</span>
+        </div>
+        <div class="pin-right">
+          <img id="qrImage" class="qr-image" alt="QR code" />
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="avatar-row" id="lastAvatars"></div>
+        <button id="generateBtn" class="btn primary" type="button">
+          Generate PIN
+        </button>
+      </div>
+    </header>
+
+    <main class="lobby-main">
+      <section class="card lobby-card-full">
+        <div class="lobby-header-new">
+          <div class="lobby-header-left">
+            <button id="backToSelectionBtn" class="btn secondary" type="button">
+              ← Change Quiz
+            </button>
+            <div class="lobby-quiz-info">
+              <div class="muted small">Currently hosting:</div>
+              <div id="currentQuizTitle" class="current-quiz-title-inline">None</div>
+              <div id="currentSlideInfo" class="muted small"></div>
+            </div>
+          </div>
+          <div class="lobby-header-center">
+            <h1 class="title">Waiting for participants</h1>
+            <div class="players-count-display">
+              <span class="pill-icon">👥</span>
+              <span id="playersCount">0</span> players
+            </div>
+          </div>
+          <div class="lobby-header-right">
+            <button id="startQuestionBtn" class="btn success" type="button" disabled>
+              Start question
+            </button>
+          </div>
+        </div>
+        <p class="muted" style="text-align: center; margin-bottom: 20px;">
+          Share the PIN or QR with your students. Click a player to kick them.
+        </p>
+        <div id="playersGrid" class="players-grid"></div>
+      </section>
+    </main>
+
+    <div id="quizNavControls" class="hidden">
+      <div id="currentQuizInfo" class="current-quiz-info">
+        <div>
+          <div class="muted small">Currently hosting</div>
+          <div id="currentQuizTitleOld" class="current-quiz-title">None</div>
+          <div id="currentSlideInfoOld" class="muted small"></div>
+        </div>
+        <div class="btn-row">
+          <button id="prevSlideBtn" class="btn" type="button" disabled">&lt;</button>
+          <button id="nextSlideBtn" class="btn" type="button" disabled>&gt;</button>
+          <button id="sendQuestionBtn" class="btn success" type="button" disabled>
+            Send this slide
+          </button>
+          <button id="endQuestionBtn" class="btn warn" type="button" disabled>
+            End question / Results
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </main>
+  </div>
+  <div id="playersModal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content modal-players">
+      <h2>Players in Game</h2>
+      <div id="playersModalGrid" class="players-modal-grid"></div>
+      <button id="closePlayersBtn" class="btn primary" type="button">Close</button>
+    </div>
+  </div>
+  <div id="confirmGenerateModal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content confirm-modal">
+      <div class="confirm-icon">⚠️</div>
+      <h2>Generate New Game PIN?</h2>
+      <p class="confirm-message">This will create a new game and <strong>kick all current players</strong>. They will
+        need to rejoin with the new PIN.</p>
+      <div class="confirm-actions">
+        <button id="confirmGenerateYes" class="btn warn" type="button">Yes, Generate New PIN</button>
+        <button id="confirmGenerateNo" class="btn secondary" type="button">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <div id="confirmDeleteQuizModal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content confirm-modal">
+      <div class="confirm-icon">🗑️</div>
+      <h2>Delete Quiz?</h2>
+      <p class="confirm-message">Are you sure you want to delete "<strong id="deleteQuizName"></strong>"? This action
+        cannot be undone.</p>
+      <div class="confirm-actions">
+        <button id="confirmDeleteYes" class="btn warn" type="button">Yes, Delete Quiz</button>
+        <button id="confirmDeleteNo" class="btn secondary" type="button">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <div id="quizEditorModal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content quiz-editor">
+      <h2 id="quizEditorTitle">Edit quiz</h2>
+      <div class="tab-row">
+        <button id="tabQuizInfo" class="tab active" type="button">1. Quiz info</button>
+        <button id="tabSlides" class="tab" type="button">2. Slides</button>
+      </div>
+      <div id="quizInfoSection">
+        <label>
+          Title
+          <input id="qeTitle" type="text" />
+        </label>
+        <div class="muted small" style="margin-top:8px;">Cover image</div>
+        <div class="cover-upload-row">
+          <div class="cover-preview" id="qeImagePreview">
+            <span class="muted small">No image</span>
+          </div>
+          <div>
+            <button id="qeImageUploadBtn" class="btn secondary" type="button">
+              Upload image
+            </button>
+            <input id="qeImageFile" type="file" accept="image/*" style="display:none;">
+            <input id="qeImageUrl" type="hidden" />
+            <div class="muted tiny" style="margin-top:4px;">
+              Choose a picture for this quiz (students will see it only once).
+            </div>
+          </div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button id="qeToSlidesBtn" class="btn primary" type="button">
+            Save &amp; edit slides
+          </button>
+          <button id="qeCancelInfo" class="btn" type="button">Close</button>
+        </div>
+      </div>
+      <div id="slidesSection" class="hidden">
+        <div class="muted small">Slide navigation</div>
+        <div class="btn-row">
+          <button id="qePrevSlide" class="btn" type="button">&lt;</button>
+          <span id="qeSlideLabel" class="muted small"></span>
+          <button id="qeNextSlide" class="btn" type="button">&gt;</button>
+          <button id="qeAddSlide" class="btn secondary" type="button">Add slide</button>
+        </div>
+        <label>
+          Question
+          <input id="qeQuestion" type="text" />
+        </label>
+        <label>
+          Slide Image (optional)
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <button id="qeSlideImageUploadBtn" class="btn secondary" type="button">
+              Upload Image
+            </button>
+            <input id="qeSlideImageFile" type="file" accept="image/*" style="display:none;">
+            <input id="qeSlideImageUrl" type="hidden" />
+            <span id="qeSlideImagePreview" class="muted tiny"></span>
+          </div>
+          <div class="muted tiny" style="margin-top:4px;">
+            Add an image to this question (students will see it during the quiz).
+          </div>
+        </label>
+        <label>
+          Correct answer
+          <input id="qeCorrect" type="text" />
+        </label>
+        <label>
+          Wrong answer 1
+          <input id="qeWrong1" type="text" />
+        </label>
+        <label>
+          Wrong answer 2
+          <input id="qeWrong2" type="text" />
+        </label>
+        <label>
+          Wrong answer 3
+          <input id="qeWrong3" type="text" />
+        </label>
+        <div class="qe-actions-row">
+          <button id="qeSaveSlide" class="btn green">Save slide</button>
+          <button id="qeDeleteSlide" class="btn red">Delete slide</button>
+          <button id="qeCloseSlides" class="btn ghost">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="confirmCloseEditorModal" class="overlay hidden" style="z-index: 10000;">
+    <div class="modal-content" style="max-width: 500px;">
+      <h2>Save Quiz Before Closing?</h2>
+      <p style="margin: 16px 0; color: #cbd5e1;">You have filled in content. Do you want to save this quiz?</p>
+      <div class="btn-row" style="gap: 12px;">
+        <button id="confirmCloseSave" class="btn primary">Save & Close</button>
+        <button id="confirmCloseDiscard" class="btn red">Discard & Close</button>
+        <button id="confirmCloseCancel" class="btn ghost">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="toastContainer" class="toast-container"></div>
+  <a id="exportLink" style="display:none;"></a>
+
+  <div id="teacherQuestionView" class="scoreboard-overlay"
+    style="background: linear-gradient(135deg, #46178f 0%, #8b5cf6 50%, #6366f1 100%);">
+    <div class="question-container" style="max-width: 1000px;">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <div
+          style="display: inline-block; background: rgba(0,0,0,0.3); padding: 12px 24px; border-radius: 8px; backdrop-filter: blur(10px);">
+          <div style="font-size: 1.5rem; font-weight: 900; color: white;">
+            Question <span id="currentQuestionNum">1</span>/<span id="totalQuestions">1</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="question-box">
+        <h2 id="teacherQText" class="question-text"></h2>
+        <img id="teacherQuestionImage" class="question-image" style="display: none;" />
+      </div>
+      <div id="teacherAnswers" class="answers-grid"></div>
+      <div style="text-align: center; margin-top: 30px;">
+        <div style="font-size: 1.5rem; color: white; font-weight: 700; margin-bottom: 10px;">
+          <span id="answeredCount">0</span> / <span id="totalPlayers">0</span> players answered
+        </div>
+        <div style="font-size: 3rem; color: white; font-weight: 900; margin-bottom: 20px;">
+          <span id="teacherTimeLeft">20</span>s
+        </div>
+        <button id="skipToResultsBtn" class="btn warn" style="font-size: 1.2rem; padding: 16px 32px;">
+          ⏭️ Skip to Results
+        </button>
+      </div>
+    </div>
+  </div>
+  <div id="teacherScoreboard" class="scoreboard-overlay">
+    <div class="scoreboard-container">
+      <div class="scoreboard-header">
+        <h1 class="scoreboard-title">Leaderboard</h1>
+        <p class="scoreboard-subtitle">Current Rankings</p>
+      </div>
+      <div id="teacherScoreboardList" class="scoreboard-list"></div>
+
+      <div style="text-align: center; margin-top: 30px;">
+        <button id="nextQuestionBtn" class="btn primary" style="font-size: 1.2rem; padding: 16px 32px;">
+          Next Question →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="historyModal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content" style="max-width: 900px;">
+      <h2>📊 Quiz History</h2>
+      <div id="historyList" class="history-list"></div>
+      <button id="closeHistoryBtn" class="btn primary" style="margin-top: 16px;">Close</button>
+    </div>
+  </div>
+
+  <script src="/teacher/teacher.js"></script>
+</body>
+
+</html>
