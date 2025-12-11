@@ -90,7 +90,7 @@ http://<server-ip>:5000/student
 ├── uploads/
 │   └── .gitkeep
 │
-└── screenshots/   ← optional (add your images here)
+└── screenshots/
 ```
 
 ---
@@ -106,17 +106,11 @@ http://<server-ip>:5000/student
 
 ---
 
-## 🛠️ Configuration (optional)
+## 🛠️ Configuration
 
 You can customize:
-- Question timers  
-- Maximum players  
-- Quiz file formats  
-- UI themes  
-- Sound effects  
+- Quiz file formats   
 - Scoreboards / leaderboards  
-
-Ask me anytime to help you implement these.
 
 ---
 
@@ -130,10 +124,6 @@ Ask me anytime to help you implement these.
 
 ### Lobby Screen
 ![Lobby Screen](screenshots/lobby.png)
-
-```
-
-If you send me screenshots, I will insert them into the README for you.
 
 ---
 
