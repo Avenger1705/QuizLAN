@@ -1,0 +1,86 @@
+/* Quiz History Styles */
+
+/* History modal specific - prevent double scrollbars */
+#historyModal .modal-content {
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#historyModal h2 {
+    flex-shrink: 0;
+    margin-bottom: 16px;
+}
+
+#historyModal .btn {
+    flex-shrink: 0;
+}
+
+.history-list {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 4px;
+    margin: 0;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    transition: background 0.2s, transform 0.2s;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.history-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(4px);
+}
+
+.history-info {
+    flex: 1;
+}
+
+.history-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 8px;
+}
+
+.history-meta {
+    display: flex;
+    gap: 20px;
+    font-size: 0.9rem;
+    color: #94a3b8;
+}
+
+.history-meta span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Scrollbar for history list */
+.history-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.history-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+    background: rgba(138, 99, 255, 0.5);
+    border-radius: 10px;
+}
+
+.history-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(138, 99, 255, 0.7);
+}

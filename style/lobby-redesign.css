@@ -1,0 +1,144 @@
+/* New Lobby Layout Styles */
+
+.lobby-main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+.lobby-card-full {
+    width: 100%;
+}
+
+.lobby-header-new {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 20px;
+    align-items: start;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.lobby-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.lobby-quiz-info {
+    padding-left: 4px;
+}
+
+.current-quiz-title-inline {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 4px 0;
+}
+
+.lobby-header-center {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.lobby-header-center .title {
+    margin: 0;
+    font-size: 2rem;
+}
+
+.players-count-display {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, rgba(75, 138, 255, 0.2), rgba(138, 99, 255, 0.2));
+    border: 2px solid rgba(75, 138, 255, 0.4);
+    border-radius: 999px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(75, 138, 255, 0.3);
+}
+
+.players-count-display .pill-icon {
+    font-size: 1.5rem;
+}
+
+.lobby-header-right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+}
+
+/* Players Grid Scrolling */
+.players-grid {
+    max-height: 60vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 8px;
+}
+
+/* Custom Scrollbar for Players Grid */
+.players-grid::-webkit-scrollbar {
+    width: 10px;
+}
+
+.players-grid::-webkit-scrollbar-track {
+    background: rgba(30, 41, 59, 0.3);
+    border-radius: 10px;
+}
+
+.players-grid::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #4b8aff 0%, #7d5dff 100%);
+    border-radius: 10px;
+}
+
+.players-grid::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #5d96ff 0%, #8c6bff 100%);
+}
+
+/* Hide lobby content when overlays are active */
+.scoreboard-overlay.active~#gameLobbyScreen .lobby-main,
+.scoreboard-overlay.active~#gameLobbyScreen .topbar.lobby-banner,
+#teacherQuestionView.active~#gameLobbyScreen .lobby-main,
+#teacherQuestionView.active~#gameLobbyScreen .topbar.lobby-banner {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+/* Alternative: Hide when any overlay is active */
+body:has(.scoreboard-overlay.active) #gameLobbyScreen,
+body:has(#teacherQuestionView.active) #gameLobbyScreen {
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .lobby-header-new {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .lobby-header-left,
+    .lobby-header-center,
+    .lobby-header-right {
+        justify-content: center;
+        align-items: center;
+    }
+
+    .lobby-quiz-info {
+        text-align: center;
+    }
+}
+
+/* Hide old players pill button */
+#openPlayersBtn {
+    display: none !important;
+}

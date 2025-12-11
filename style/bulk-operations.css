@@ -1,0 +1,97 @@
+/* Bulk Operations Styles */
+
+/* Bulk Actions Bar */
+.bulk-actions-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, rgba(75, 138, 255, 0.15), rgba(138, 99, 255, 0.15));
+    border: 1px solid rgba(75, 138, 255, 0.4);
+    border-radius: 14px;
+    margin-bottom: 16px;
+    backdrop-filter: blur(10px);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.bulk-actions-bar.hidden {
+    display: none;
+}
+
+.bulk-actions-info {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.bulk-actions-info span {
+    color: #4b8aff;
+    font-weight: 700;
+}
+
+.bulk-actions-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+/* Quiz Card Checkbox */
+.quiz-checkbox-container {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 6px;
+    padding: 4px;
+    backdrop-filter: blur(8px);
+}
+
+.quiz-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #4b8aff;
+}
+
+/* Selected Quiz Card */
+.selection-quiz-card.selected {
+    border: 2px solid #4b8aff !important;
+    box-shadow: 0 0 0 3px rgba(75, 138, 255, 0.3), 0 8px 24px rgba(75, 138, 255, 0.4) !important;
+    transform: scale(1.02);
+}
+
+.selection-quiz-card {
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover effect for checkbox */
+.quiz-checkbox-container:hover {
+    background: rgba(75, 138, 255, 0.3);
+}
+
+/* Button styles for bulk actions */
+.btn.small {
+    padding: 8px 14px;
+    font-size: 13px;
+}
+
+.btn.warn {
+    background: linear-gradient(135deg, #ff6b6b, #ff3b30);
+}
+
+.btn.warn:hover {
+    background: linear-gradient(135deg, #ff7a7a, #ff4a40);
+}

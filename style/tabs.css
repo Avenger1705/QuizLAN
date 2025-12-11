@@ -1,0 +1,59 @@
+/* Beautiful Tab Navigation */
+.tab-row {
+    display: flex;
+    gap: 0;
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.tab {
+    flex: 1;
+    padding: 12px 24px;
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 1;
+}
+
+.tab:hover {
+    color: #cbd5e1;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tab.active {
+    color: #f9fafb;
+    background: linear-gradient(135deg, #a78bfa 0%, #ec4899 100%);
+    box-shadow: 0 4px 12px rgba(167, 139, 250, 0.3);
+    transform: translateY(-2px);
+}
+
+.tab.active:hover {
+    background: linear-gradient(135deg, #b794ff 0%, #ff5bb0 100%);
+}
+
+/* Smooth tab content transitions */
+#quizInfoSection,
+#slidesSection {
+    animation: fadeSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

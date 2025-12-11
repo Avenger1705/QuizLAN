@@ -1,0 +1,41 @@
+/* Prevent double scrollbars globally */
+html {
+    overflow: hidden;
+    height: 100%;
+}
+
+body {
+    overflow: hidden;
+    height: 100%;
+}
+
+/* Prevent body from scrolling when overlays are active */
+body.overlay-active {
+    overflow: hidden !important;
+}
+
+/* Hide scrollbar on overlays themselves */
+.scoreboard-overlay,
+#teacherQuestionView,
+.modal,
+.overlay {
+    overflow: hidden !important;
+}
+
+/* Only allow scrolling on specific inner containers */
+.scoreboard-list,
+.modal-content,
+.history-list {
+    overflow-y: auto !important;
+}
+
+/* Hide scrollbar on quiz selection screen */
+.quiz-selection-screen {
+    overflow: hidden !important;
+}
+
+/* Allow scrolling only on the quiz grid */
+.selection-quiz-grid {
+    overflow-y: auto !important;
+    max-height: calc(100vh - 400px);
+}

@@ -1,1 +1,171 @@
+/* Kahoot-Style Answer Grid */
+.answers-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
 
+/* Answer Buttons */
+.answer-option {
+    position: relative;
+    padding: 20px 24px;
+    border-radius: 4px;
+    border: none;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+/* Red - Triangle (Top-Left) */
+.answer-option:nth-child(1) {
+    background: #E21B3C;
+}
+
+/* Blue - Diamond (Top-Right) */
+.answer-option:nth-child(2) {
+    background: #1368CE;
+}
+
+/* Yellow/Orange - Circle (Bottom-Left) */
+.answer-option:nth-child(3) {
+    background: #D89E00;
+}
+
+/* Green - Square (Bottom-Right) */
+.answer-option:nth-child(4) {
+    background: #26890C;
+}
+
+/* Hover Effects */
+.answer-option:hover:not(:disabled) {
+    filter: brightness(1.15);
+    transform: scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.answer-option:active:not(:disabled) {
+    filter: brightness(0.95);
+    transform: scale(0.98);
+}
+
+/* Disabled State */
+.answer-option:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Selected State */
+.answer-option.selected {
+    filter: brightness(0.85);
+    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Correct Answer */
+.answer-option.correct {
+    animation: correctPulse 0.5s ease;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.8);
+}
+
+/* Wrong Answer */
+.answer-option.wrong {
+    animation: wrongShake 0.4s ease;
+    opacity: 0.4;
+    filter: grayscale(0.8);
+}
+
+/* Symbol styling */
+.answer-symbol {
+    font-size: 2rem;
+    line-height: 1;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+}
+
+/* Answer text */
+.answer-text {
+    flex: 1;
+    line-height: 1.3;
+}
+
+@keyframes correctPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes wrongShake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-6px);
+    }
+
+    75% {
+        transform: translateX(6px);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .answers-grid {
+        gap: 8px;
+    }
+
+    .answer-option {
+        padding: 18px 20px;
+        min-height: 70px;
+        font-size: 1.2rem;
+        gap: 12px;
+    }
+
+    .answer-symbol {
+        font-size: 1.6rem;
+        width: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .answers-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .answer-option {
+        padding: 16px 18px;
+        min-height: 65px;
+        font-size: 1.1rem;
+        gap: 10px;
+    }
+
+    .answer-symbol {
+        font-size: 1.4rem;
+        width: 24px;
+    }
+}
