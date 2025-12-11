@@ -68,7 +68,6 @@ Open your browser and navigate to:
 
 ## 📸 Screenshots
 
-*(Add your awesome new screenshots here!)*
 
 ---
 
