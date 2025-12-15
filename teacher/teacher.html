@@ -80,16 +80,12 @@
           <div id="pinCode" class="pin-code">------</div>
           <span id="pinTooltip" class="pin-tooltip">Click to copy to clipboard</span>
         </div>
-        <div class="pin-right">
+        <div class="pin-right qr-light-bg">
           <img id="qrImage" class="qr-image" alt="QR code" />
         </div>
       </div>
       <div class="topbar-right">
         <div class="avatar-row" id="lastAvatars"></div>
-        <button id="themeToggle" class="btn secondary" style="padding: 8px 12px;" aria-label="Toggle Theme">
-          <span class="theme-icon-sun">☀️</span>
-          <span class="theme-icon-moon hidden">🌙</span>
-        </button>
         <button id="generateBtn" class="btn primary" type="button">
           Generate PIN
         </button>
@@ -373,35 +369,6 @@
     </div>
   </div>
   <script src="/teacher/teacher.js"></script>
-  <script>
-    // Theme Toggle Logic for Teacher Page
-    const themeToggle = document.getElementById('themeToggle');
-    const sunIcon = document.querySelector('.theme-icon-sun');
-    const moonIcon = document.querySelector('.theme-icon-moon');
-
-    // Sync initial icon state
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    updateThemeIcon(currentTheme);
-
-    themeToggle.addEventListener('click', () => {
-      const currentTheme = document.documentElement.getAttribute('data-theme');
-      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-
-      document.documentElement.setAttribute('data-theme', newTheme);
-      localStorage.setItem('quiz_theme', newTheme);
-      updateThemeIcon(newTheme);
-    });
-
-    function updateThemeIcon(theme) {
-      if (theme === 'light') {
-        sunIcon.classList.add('hidden');
-        moonIcon.classList.remove('hidden');
-      } else {
-        sunIcon.classList.remove('hidden');
-        moonIcon.classList.add('hidden');
-      }
-    }
-  </script>
 </body>
 
 </html>

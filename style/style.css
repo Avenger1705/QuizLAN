@@ -726,6 +726,10 @@ input[type="number"]:focus {
   border-radius: 8px;
 }
 
+.qr-light-bg {
+  background-color: #ffffff;
+}
+
 /* right side of top bar */
 .topbar-right {
   display: flex;
