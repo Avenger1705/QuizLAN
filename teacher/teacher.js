@@ -444,7 +444,7 @@ function updateQr() {
   }
   const origin = window.location.origin;
   const link = `${origin}/student?pin=${encodeURIComponent(currentPin)}`;
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(link)}`;
+  const qrUrl = `https://quickchart.io/qr?size=150&data=${encodeURIComponent(link)}&light=ffffff`;
   qrImage.src = qrUrl;
   qrImage.style.visibility = "visible";
 }
