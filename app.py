@@ -19,7 +19,6 @@ STYLE_DIR = os.path.join(BASE_DIR, "style")
 UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")   
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 PIN_LENGTH = 6
-QUESTION_DURATION = 20  
 app = Flask(__name__)
 games: Dict[str, Dict[str, Any]] = {}
 def generate_pin() -> str:
