@@ -584,7 +584,7 @@ input[type="number"]:focus {
   color: var(--text-primary);
   border-radius: 20px;
   overflow: hidden;
-  min-height: 90px;
+  min-height: 110px;
   box-shadow: var(--shadow-card);
   border: 1px solid var(--border-color);
 }
@@ -623,33 +623,52 @@ input[type="number"]:focus {
 }
 
 .pin-label {
-  font-size: 13px;
-  letter-spacing: 0.12em;
+  font-size: 11px;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #666;
+  color: #94a3b8;
+  font-weight: 600;
+  margin-bottom: 8px;
 }
 
 .pin-code-wrapper {
   position: relative;
   display: inline-block;
   cursor: pointer;
-  transition: transform 0.1s ease;
+  transition: all 0.3s ease;
   overflow: visible;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  padding: 16px 28px;
+  border-radius: 16px;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    0 2px 4px rgba(0, 0, 0, 0.06),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  width: 280px;
+  text-align: center;
 }
 
 .pin-code-wrapper:hover {
-  transform: scale(1.05);
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.12),
+    0 4px 8px rgba(0, 0, 0, 0.08),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.04);
 }
 
 .pin-code-wrapper:active {
-  transform: scale(0.98);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.1),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.04);
 }
 
 .pin-code {
-  font-size: 34px;
-  font-weight: 800;
-  letter-spacing: 0.15em;
+  font-size: 36px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
   user-select: none;
+  color: #1e293b;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .pin-tooltip {
@@ -721,8 +740,8 @@ input[type="number"]:focus {
 }
 
 .qr-image {
-  width: 80px;
-  height: 80px;
+  width: 110px;
+  height: 110px;
   border-radius: 8px;
 }
 

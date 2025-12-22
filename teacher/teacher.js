@@ -444,9 +444,25 @@ function updateQr() {
   }
   const origin = window.location.origin;
   const link = `${origin}/student?pin=${encodeURIComponent(currentPin)}`;
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(link)}`;
-  qrImage.src = qrUrl;
-  qrImage.style.visibility = "visible";
+
+  // Use local QR code generation API (150x150 to match qrserver)
+  const qrApiUrl = `/api/generate_qr?size=150&data=${encodeURIComponent(link)}`;
+
+  fetch(qrApiUrl)
+    .then(response => response.json())
+    .then(data => {
+      if (data.ok && data.image) {
+        qrImage.src = data.image;
+        qrImage.style.visibility = "visible";
+      } else {
+        console.error("Failed to generate QR code:", data.error);
+        qrImage.style.visibility = "hidden";
+      }
+    })
+    .catch(err => {
+      console.error("QR code generation error:", err);
+      qrImage.style.visibility = "hidden";
+    });
 }
 function setPin(pin) {
   currentPin = pin;
@@ -504,9 +520,9 @@ function copyPinToClipboard() {
 }
 
 function showCopySuccess() {
-  // Show visual feedback
+  // Show visual feedback with bright green
   pinCodeEl.textContent = "COPIED!";
-  pinCodeEl.style.color = "#22c55e";
+  pinCodeEl.style.cssText = "color: #10b981 !important; font-weight: 900;";
 
   if (pinTooltip) {
     pinTooltip.textContent = "Copied!";
@@ -516,7 +532,8 @@ function showCopySuccess() {
   // Restore PIN display after 2 seconds
   setTimeout(() => {
     pinCodeEl.textContent = currentPin;
-    pinCodeEl.style.color = "";
+    // Reset to light mode color (dark text for light background)
+    pinCodeEl.style.cssText = "color: #1e293b; font-weight: 900;";
 
     if (pinTooltip) {
       pinTooltip.textContent = "Click to copy to clipboard";

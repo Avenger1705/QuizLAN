@@ -2,6 +2,9 @@ import os
 import time
 import random
 import string
+import qrcode
+import io
+import base64
 from typing import Dict, Any
 from flask import (
     Flask,
@@ -12,6 +15,7 @@ from flask import (
     url_for,
 )
 from werkzeug.utils import secure_filename
+from PIL import Image
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 TEACHER_DIR = os.path.join(BASE_DIR, "teacher")
 STUDENT_DIR = os.path.join(BASE_DIR, "student")
@@ -412,6 +416,47 @@ def api_get_scoreboard():
         })
     players.sort(key=lambda p: p["score"], reverse=True)
     return jsonify({"ok": True, "players": players})
+
+@app.route("/api/generate_qr", methods=["GET"])
+def api_generate_qr():
+    """Generate QR code locally and return as base64-encoded PNG"""
+    data = request.args.get("data", "")
+    size = int(request.args.get("size", 150))
+    
+    if not data:
+        return jsonify({"ok": False, "error": "Missing data parameter"}), 400
+    
+    try:
+        # Create QR code instance
+        qr = qrcode.QRCode(
+            version=1,  # Controls the size of the QR code
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=4,
+        )
+        
+        # Add data to the QR code
+        qr.add_data(data)
+        qr.make(fit=True)
+        
+        # Create an image from the QR code
+        img = qr.make_image(fill_color="black", back_color="white")
+        
+        # Resize to requested size
+        img = img.resize((size, size), Image.Resampling.LANCZOS)
+        
+        # Convert to base64
+        buffered = io.BytesIO()
+        img.save(buffered, format="PNG")
+        img_str = base64.b64encode(buffered.getvalue()).decode()
+        
+        return jsonify({
+            "ok": True,
+            "image": f"data:image/png;base64,{img_str}"
+        })
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
 @app.route("/health")
 def health():
     return jsonify({"status": "ok"})

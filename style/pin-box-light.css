@@ -1,0 +1,66 @@
+/* Light mode styling for QR code / PIN box only */
+.pin-box.light-mode {
+  background: #ffffff !important;
+  color: #1e293b !important;
+  border-color: rgba(148, 163, 184, 0.4) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+}
+
+.pin-box.light-mode .pin-left {
+  background: #f8fafc !important;
+}
+
+.pin-box.light-mode .pin-subtitle {
+  color: #1e293b !important;
+}
+
+.pin-box.light-mode .pin-subtitle-small {
+  color: #475569 !important;
+}
+
+.pin-box.light-mode .pin-label {
+  color: #94a3b8 !important;
+}
+
+.pin-box.light-mode .pin-code {
+  color: #1e293b !important;
+}
+
+.pin-box.light-mode .pin-center {
+  border-left-color: rgba(148, 163, 184, 0.2) !important;
+  border-right-color: rgba(148, 163, 184, 0.2) !important;
+}
+
+.pin-box.light-mode .pin-right {
+  background: #ffffff !important;
+}
+
+/* Keep tooltip dark for better contrast */
+.pin-box.light-mode .pin-tooltip {
+  background: rgba(30, 41, 59, 0.95) !important;
+  color: #f8fafc !important;
+}
+
+.pin-box.light-mode .pin-tooltip.copied {
+  background: #22c55e !important;
+  color: #fff !important;
+}
+
+.pin-box.light-mode .pin-tooltip::before {
+  border-bottom-color: rgba(30, 41, 59, 0.95) !important;
+}
+
+
+.pin-box.light-mode .pin-tooltip.copied::before {
+  border-bottom-color: #22c55e !important;
+}
+
+/* Ensure PIN code wrapper looks good in light mode */
+.pin-box.light-mode .pin-code-wrapper {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+  border-color: rgba(148, 163, 184, 0.25) !important;
+}
+
+.pin-box.light-mode .pin-code {
+  color: #1e293b !important;
+}
