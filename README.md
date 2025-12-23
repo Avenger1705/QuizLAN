@@ -82,8 +82,9 @@ Open your browser and navigate to:
 ---
 
 ## 📸 Screenshots
-
-
+![Alt text](/screenshots/lobby.png)
+![Alt text](/screenshots/teacher-view.png)
+![Alt text](/screenshots/student-view.png)
 ---
 
 ## 📜 License
