@@ -82,7 +82,7 @@ Open your browser and navigate to:
 ---
 
 ## 📸 Screenshots
-
+/screenshots/lobby.png
 
 ---
 
