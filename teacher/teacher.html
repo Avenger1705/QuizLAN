@@ -368,6 +368,23 @@
       <button id="closeHistoryBtn" class="btn primary" style="margin-top: 16px;">Close</button>
     </div>
   </div>
+  <div id="qrModal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content qr-modal-content">
+      <div class="qr-modal-header">
+        <h2>📱 Scan to Join</h2>
+        <button id="closeQrModal" class="qr-close-btn">✕</button>
+      </div>
+      <div class="qr-modal-pin">
+        <div class="qr-modal-pin-label">Game PIN</div>
+        <div id="qrModalPin" class="qr-modal-pin-code">------</div>
+      </div>
+      <div class="qr-modal-image-container">
+        <img id="qrModalImage" class="qr-modal-image" alt="QR code" />
+      </div>
+      <p class="qr-modal-instructions">Students can scan this QR code or enter the PIN on the student page</p>
+    </div>
+  </div>
   <script src="/teacher/teacher.js"></script>
   <script>
     // Force dark mode globally

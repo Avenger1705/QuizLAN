@@ -1863,3 +1863,64 @@ if (backToSelectionBtn) {
     }
   });
 }
+
+// QR Code Modal functionality
+const qrModal = document.getElementById('qrModal');
+const qrModalImage = document.getElementById('qrModalImage');
+const qrModalPin = document.getElementById('qrModalPin');
+const closeQrModal = document.getElementById('closeQrModal');
+
+// Open QR modal when clicking the small QR code
+if (qrImage && qrModal) {
+  qrImage.addEventListener('click', () => {
+    if (!currentPin || !qrImage.src) {
+      showToast('No QR code available', 'warning');
+      return;
+    }
+
+    // Generate a larger QR code for the modal (400x400)
+    const origin = window.location.origin;
+    const link = `${origin}/student?pin=${encodeURIComponent(currentPin)}`;
+    const largeQrApiUrl = `/api/generate_qr?size=400&data=${encodeURIComponent(link)}`;
+
+    fetch(largeQrApiUrl)
+      .then(response => response.json())
+      .then(data => {
+        if (data.ok && data.image) {
+          qrModalImage.src = data.image;
+          qrModalPin.textContent = currentPin;
+          qrModal.classList.remove('hidden');
+        } else {
+          showToast('Failed to generate QR code', 'error');
+        }
+      })
+      .catch(err => {
+        console.error('QR code generation error:', err);
+        showToast('Failed to generate QR code', 'error');
+      });
+  });
+}
+
+// Close QR modal when clicking the close button
+if (closeQrModal && qrModal) {
+  closeQrModal.addEventListener('click', () => {
+    qrModal.classList.add('hidden');
+  });
+}
+
+// Close QR modal when clicking the backdrop
+if (qrModal) {
+  const qrModalBackdrop = qrModal.querySelector('.modal-backdrop');
+  if (qrModalBackdrop) {
+    qrModalBackdrop.addEventListener('click', () => {
+      qrModal.classList.add('hidden');
+    });
+  }
+}
+
+// Close QR modal with Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && qrModal && !qrModal.classList.contains('hidden')) {
+    qrModal.classList.add('hidden');
+  }
+});

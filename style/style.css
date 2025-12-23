@@ -1263,3 +1263,126 @@ input[type="number"]:focus {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   }
 }
+
+/* =========================
+   QR Code Modal Styling
+   ========================= */
+.qr-modal-content {
+  max-width: 500px !important;
+  text-align: center;
+  padding: 32px 28px !important;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+  border: 2px solid rgba(255, 255, 255, 0.15) !important;
+  overflow: hidden !important;
+  max-height: none !important;
+}
+
+.qr-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.qr-modal-header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #f9fafb;
+}
+
+.qr-close-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #f9fafb;
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.qr-close-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  transform: rotate(90deg);
+}
+
+.qr-modal-pin {
+  background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+  padding: 20px 32px;
+  border-radius: 16px;
+  margin-bottom: 28px;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.2),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.qr-modal-pin-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.qr-modal-pin-code {
+  font-size: 3rem;
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  color: #1e293b;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  user-select: all;
+}
+
+.qr-modal-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: white;
+  border-radius: 20px;
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.3),
+    0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.qr-modal-image {
+  width: 320px !important;
+  height: 320px !important;
+  border-radius: 12px;
+  display: block;
+}
+
+.qr-modal-instructions {
+  color: #cbd5e1;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0 16px;
+}
+
+/* Make the small QR code clickable */
+.qr-image {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.qr-image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.qr-image:active {
+  transform: scale(0.98);
+}
