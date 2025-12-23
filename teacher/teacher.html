@@ -192,6 +192,19 @@
       </div>
     </div>
   </div>
+  <div id="confirmCancelQuizModal" class="modal hidden" style="z-index: 10000;">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content confirm-modal">
+      <div class="confirm-icon">⚠️</div>
+      <h2>Cancel Quiz?</h2>
+      <p class="confirm-message">Are you sure you want to <strong>cancel this quiz</strong>? All progress will be lost
+        and students will return to the lobby. This action cannot be undone.</p>
+      <div class="confirm-actions">
+        <button id="confirmCancelQuizYes" class="btn warn" type="button">Yes, Cancel Quiz</button>
+        <button id="confirmCancelQuizNo" class="btn secondary" type="button">No, Continue Quiz</button>
+      </div>
+    </div>
+  </div>
   <div id="quizEditorModal" class="modal hidden">
     <div class="modal-backdrop"></div>
     <div class="modal-content quiz-editor">
@@ -332,7 +345,13 @@
   <a id="exportLink" style="display:none;"></a>
   <div id="teacherQuestionView" class="scoreboard-overlay"
     style="background: linear-gradient(135deg, #46178f 0%, #8b5cf6 50%, #6366f1 100%);">
-    <div class="question-container" style="max-width: 1000px;">
+    <div class="question-container" style="max-width: 1000px; position: relative; padding-top: 60px;">
+      <!-- Cancel Quiz Button - Fixed Top Left Corner -->
+      <button id="cancelQuizBtn" class="btn warn"
+        style="position: fixed; top: 20px; left: 20px; font-size: 0.95rem; padding: 10px 20px; background: linear-gradient(135deg, #dc2626, #991b1b); z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.2);">
+        ❌ Cancel Quiz
+      </button>
+
       <div style="text-align: center; margin-bottom: 20px;">
         <div
           style="display: inline-block; background: rgba(0,0,0,0.3); padding: 12px 24px; border-radius: 8px; backdrop-filter: blur(10px);">

@@ -1,6 +1,7 @@
 let currentPin = null;
 let playerId = null;
 let pollInterval = null;
+let heartbeatInterval = null;  // Track heartbeat sending
 let selectedAvatar = null;
 let pendingName = null;
 let pendingPin = null;
@@ -293,6 +294,7 @@ if (savedPlayerId && savedPin) {
   if (waitingOverlay) waitingOverlay.classList.remove("hidden");
   if (pollInterval) clearInterval(pollInterval);
   pollInterval = setInterval(pollStudentState, 1000);
+  startHeartbeat(); // Start heartbeat on reconnect
   if (quitBtn) quitBtn.disabled = false;
 } else {
   if (quitBtn) quitBtn.disabled = true;
@@ -307,6 +309,41 @@ function ajaxPost(url, data) {
 function ajaxGet(url) {
   return fetch(url).then((res) => res.json());
 }
+
+// Send heartbeat to server to prove we're still connected
+function sendHeartbeat() {
+  if (!currentPin || !playerId) {
+    return;
+  }
+
+  // Use fetch with a short timeout to avoid blocking
+  fetch("/api/heartbeat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ pin: currentPin, player_id: playerId }),
+  }).catch((err) => {
+    // Silently fail - connection issues will be detected by teacher
+    console.log("Heartbeat failed:", err);
+  });
+}
+
+// Start sending heartbeat every second
+function startHeartbeat() {
+  if (heartbeatInterval) {
+    clearInterval(heartbeatInterval);
+  }
+  heartbeatInterval = setInterval(sendHeartbeat, 1000);
+  sendHeartbeat(); // Send immediately
+}
+
+// Stop sending heartbeat
+function stopHeartbeat() {
+  if (heartbeatInterval) {
+    clearInterval(heartbeatInterval);
+    heartbeatInterval = null;
+  }
+}
+
 joinBtn.addEventListener("click", () => {
   const name = nameInput.value.trim();
   const pin = pinInput.value.trim();
@@ -321,6 +358,7 @@ joinBtn.addEventListener("click", () => {
     if (!pollInterval) {
       pollInterval = setInterval(pollStudentState, 1000);
     }
+    startHeartbeat(); // Ensure heartbeat is running
     return;
   }
   pendingName = name;
@@ -369,6 +407,7 @@ function joinGameWithAvatar() {
       if (quitBtn) quitBtn.disabled = false;
       if (pollInterval) clearInterval(pollInterval);
       pollInterval = setInterval(pollStudentState, 1000);
+      startHeartbeat(); // Start heartbeat after joining
     })
     .catch((err) => {
       console.error(err);
@@ -396,6 +435,7 @@ function quitGameCleanup() {
     clearInterval(pollInterval);
     pollInterval = null;
   }
+  stopHeartbeat(); // Stop heartbeat when quitting
   playerId = null;
   currentPin = null;
   nameInput.disabled = false;

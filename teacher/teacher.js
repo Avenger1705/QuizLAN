@@ -10,6 +10,7 @@ let timerAnimationFrame = null;
 let quizFinishing = false;
 let quizHistory = [];
 let selectedQuizzes = new Set();
+let lastDisconnectedPlayers = new Set(); // Track disconnected players for notifications
 const quizSelectionScreen = document.getElementById("quizSelectionScreen");
 const gameLobbyScreen = document.getElementById("gameLobbyScreen");
 const selectionQuizGrid = document.getElementById("selectionQuizGrid");
@@ -117,6 +118,10 @@ const exportLink = document.getElementById("exportLink");
 const confirmRetakeQuizModal = document.getElementById("confirmRetakeQuizModal");
 const confirmRetakeYes = document.getElementById("confirmRetakeYes");
 const confirmRetakeChangeQuiz = document.getElementById("confirmRetakeChangeQuiz");
+const cancelQuizBtn = document.getElementById("cancelQuizBtn");
+const confirmCancelQuizModal = document.getElementById("confirmCancelQuizModal");
+const confirmCancelQuizYes = document.getElementById("confirmCancelQuizYes");
+const confirmCancelQuizNo = document.getElementById("confirmCancelQuizNo");
 let editorQuizId = null;
 let editorSlideIndex = 0;
 let isEditingExistingQuiz = false;
@@ -593,10 +598,35 @@ function getAvatarEmoji(avatarName) {
 function renderPlayers(players) {
   playersGrid.innerHTML = "";
   playersModalGrid.innerHTML = "";
+
+  // Track current disconnected players
+  const currentDisconnected = new Set();
+
+  // First pass: detect disconnections
+  players.forEach((p) => {
+    if (!p.connected) {
+      currentDisconnected.add(p.id);
+
+      // Show toast if this is a NEW disconnection
+      if (!lastDisconnectedPlayers.has(p.id)) {
+        showToast(`${p.name} has disconnected`, "warning", "Student Offline");
+        console.log(`[DISCONNECT DETECTED] ${p.name} (${p.id}) is now offline`);
+      }
+    }
+  });
+
+  // Render players
   players.forEach((p) => {
     const card = document.createElement("div");
     card.className = "player-card";
     card.title = "Click to kick";
+
+    // Add disconnected styling
+    if (!p.connected) {
+      card.classList.add("disconnected");
+      card.title = "Disconnected - Click to remove";
+    }
+
     const avatar = document.createElement("div");
     avatar.className = "player-avatar";
     if (p.avatar) {
@@ -605,9 +635,20 @@ function renderPlayers(players) {
     } else {
       avatar.textContent = p.name.slice(0, 1).toUpperCase();
     }
+
     const nameEl = document.createElement("div");
     nameEl.className = "player-name";
     nameEl.textContent = p.name;
+
+    // Add disconnected indicator
+    if (!p.connected) {
+      const disconnectedBadge = document.createElement("span");
+      disconnectedBadge.className = "disconnected-badge";
+      disconnectedBadge.textContent = "🔴 Offline";
+      disconnectedBadge.style.cssText = "display: block; font-size: 0.75rem; color: #ef4444; margin-top: 4px; font-weight: 600;";
+      nameEl.appendChild(disconnectedBadge);
+    }
+
     const scoreEl = document.createElement("div");
     scoreEl.className = "player-score";
     scoreEl.textContent = `${p.score} pts`;
@@ -622,10 +663,18 @@ function renderPlayers(players) {
       );
     });
     playersGrid.appendChild(card);
+
+    // Modal card with same disconnection styling
     const modalCard = document.createElement("div");
     modalCard.className = "player-card";
     modalCard.title = "Click to kick";
     modalCard.style.cursor = "pointer";
+
+    if (!p.connected) {
+      modalCard.classList.add("disconnected");
+      modalCard.title = "Disconnected - Click to remove";
+    }
+
     const modalAvatar = document.createElement("div");
     modalAvatar.className = "player-avatar";
     if (p.avatar) {
@@ -637,6 +686,15 @@ function renderPlayers(players) {
     const modalNameEl = document.createElement("div");
     modalNameEl.className = "player-name";
     modalNameEl.textContent = p.name;
+
+    if (!p.connected) {
+      const disconnectedBadge = document.createElement("span");
+      disconnectedBadge.className = "disconnected-badge";
+      disconnectedBadge.textContent = "🔴 Offline";
+      disconnectedBadge.style.cssText = "display: block; font-size: 0.75rem; color: #ef4444; margin-top: 4px; font-weight: 600;";
+      modalNameEl.appendChild(disconnectedBadge);
+    }
+
     const modalScoreEl = document.createElement("div");
     modalScoreEl.className = "player-score";
     modalScoreEl.textContent = `${p.score} pts`;
@@ -652,6 +710,9 @@ function renderPlayers(players) {
     });
     playersModalGrid.appendChild(modalCard);
   });
+
+  // Update the tracking set for next render
+  lastDisconnectedPlayers = currentDisconnected;
 }
 function renderLastAvatars(lastThree) {
   lastAvatarsEl.innerHTML = "";
@@ -2042,3 +2103,77 @@ document.addEventListener('keydown', (e) => {
     qrModal.classList.add('hidden');
   }
 });
+
+// Cancel Quiz Button - Show confirmation modal
+if (cancelQuizBtn) {
+  console.log('[INIT] Cancel Quiz button found and event listener attached');
+  cancelQuizBtn.addEventListener('click', () => {
+    console.log('[CANCEL QUIZ] Button clicked - showing confirmation modal');
+    confirmCancelQuizModal.classList.remove('hidden');
+  });
+} else {
+  console.error('[INIT] Cancel Quiz button NOT found in DOM');
+}
+
+// Confirm Cancel Quiz - Yes
+if (confirmCancelQuizYes) {
+  confirmCancelQuizYes.addEventListener('click', () => {
+    confirmCancelQuizModal.classList.add('hidden');
+    cancelQuiz();
+  });
+}
+
+// Confirm Cancel Quiz - No
+if (confirmCancelQuizNo) {
+  confirmCancelQuizNo.addEventListener('click', () => {
+    confirmCancelQuizModal.classList.add('hidden');
+  });
+}
+
+// Close cancel modal when clicking backdrop
+if (confirmCancelQuizModal) {
+  const cancelModalBackdrop = confirmCancelQuizModal.querySelector('.modal-backdrop');
+  if (cancelModalBackdrop) {
+    cancelModalBackdrop.addEventListener('click', () => {
+      confirmCancelQuizModal.classList.add('hidden');
+    });
+  }
+}
+
+// Function to cancel the quiz and return to lobby
+function cancelQuiz() {
+  if (!currentPin) {
+    showToast('No active quiz to cancel', 'warning');
+    return;
+  }
+
+  console.log('[CANCEL QUIZ] Canceling quiz and returning to lobby');
+
+  // Reset quiz to lobby via API
+  ajaxPost('/api/reset_quiz', { pin: currentPin })
+    .then((res) => {
+      if (res.ok) {
+        showToast('Quiz canceled - returning to lobby', 'success');
+
+        // Hide question/scoreboard views
+        hideTeacherQuestion();
+        hideTeacherScoreboard();
+
+        // Reset slide index
+        activeSlideIndex = 0;
+
+        // Update UI to show lobby state
+        if (activeQuizId && quizSets[activeQuizId]) {
+          setActiveQuiz(activeQuizId, 0);
+        }
+
+        console.log('[CANCEL QUIZ] Quiz successfully canceled');
+      } else {
+        showToast(res.error || 'Failed to cancel quiz', 'error');
+      }
+    })
+    .catch((err) => {
+      console.error('[CANCEL QUIZ] Error:', err);
+      showToast('Failed to cancel quiz', 'error');
+    });
+}

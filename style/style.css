@@ -897,6 +897,58 @@ input[type="number"]:focus {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
+/* Disconnected player styling */
+.player-card.disconnected {
+  opacity: 0.6;
+  background: linear-gradient(135deg, #7f1d1d 0%, #450a0a 50%, #1a0505 100%);
+  border-color: rgba(239, 68, 68, 0.4);
+  position: relative;
+}
+
+.player-card.disconnected::after {
+  content: '⚠️';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 20px;
+  animation: pulse-warning 2s ease-in-out infinite;
+}
+
+@keyframes pulse-warning {
+
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+.player-card.disconnected:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 24px rgba(239, 68, 68, 0.4);
+  border-color: #ef4444;
+}
+
+.player-card.disconnected .player-avatar {
+  filter: grayscale(80%);
+  opacity: 0.7;
+}
+
+.player-card.disconnected .player-name {
+  color: #fca5a5;
+}
+
+.player-card.disconnected .player-score {
+  color: #fca5a5;
+  background: rgba(252, 165, 165, 0.15);
+}
+
+
 /* =========================
    Quiz list
    ========================= */

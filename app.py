@@ -99,6 +99,25 @@ def api_teacher_state():
     game = games.get(pin)
     if not game:
         return jsonify({"ok": False, "error": "Game not found"})
+    
+    # Check for disconnected players (no heartbeat in 5 seconds)
+    HEARTBEAT_TIMEOUT = 5.0
+    now = time.time()
+    disconnected_players = []
+    
+    for pid, pdata in game["players"].items():
+        last_seen = pdata.get("last_seen", pdata.get("joined_at", 0))
+        time_since_seen = now - last_seen
+        
+        # Mark as disconnected if no heartbeat for 5 seconds
+        if time_since_seen > HEARTBEAT_TIMEOUT:
+            if pdata.get("connected", True):  # Only log if status changed
+                print(f"[DISCONNECT] Player {pdata['name']} ({pid}) disconnected (last seen {time_since_seen:.1f}s ago)")
+                disconnected_players.append(pdata['name'])
+            pdata["connected"] = False
+        else:
+            pdata["connected"] = True
+    
     players = []
     for pid, pdata in game["players"].items():
         players.append(
@@ -107,6 +126,8 @@ def api_teacher_state():
                 "name": pdata["name"],
                 "score": int(pdata.get("score", 0)),
                 "avatar": pdata.get("avatar"),
+                "connected": pdata.get("connected", True),  # Include connection status
+                "last_seen": pdata.get("last_seen", pdata.get("joined_at", 0)),
             }
         )
     def joined_ts(p):
@@ -118,6 +139,7 @@ def api_teacher_state():
         "phase": game.get("phase", "lobby"),
         "players": players,
         "last_three": last_three,
+        "disconnected_players": disconnected_players,  # Notify about disconnections
     }
     if game.get("phase") == "question":
         q = game.get("current_question") or {}
@@ -201,6 +223,8 @@ def api_student_join():
         "score": 0,
         "joined_at": now,
         "last_answer": None,
+        "last_seen": now,  # Track last heartbeat
+        "connected": True,  # Connection status
     }
     return jsonify(
         {
@@ -211,6 +235,32 @@ def api_student_join():
             "avatar": avatar,
         }
     )
+
+@app.route("/api/heartbeat", methods=["POST"])
+def api_heartbeat():
+    """Student heartbeat to track active connections"""
+    data = request.get_json(force=True, silent=True) or {}
+    pin = str(data.get("pin") or "").strip()
+    player_id = data.get("player_id")
+    
+    if not pin or not player_id:
+        return jsonify({"ok": False, "error": "Missing pin or player_id"})
+    
+    game = games.get(pin)
+    if not game:
+        return jsonify({"ok": False, "error": "Game not found"})
+    
+    player = game["players"].get(player_id)
+    if not player:
+        return jsonify({"ok": False, "error": "Player not found"})
+    
+    # Update last seen timestamp
+    now = time.time()
+    player["last_seen"] = now
+    player["connected"] = True
+    
+    return jsonify({"ok": True, "timestamp": now})
+
 @app.route("/api/student_state", methods=["GET"])
 def api_student_state():
     pin = str(request.args.get("pin") or "").strip()
