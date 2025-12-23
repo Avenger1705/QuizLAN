@@ -421,7 +421,11 @@ function backToSelection() {
     pollInterval = null;
   }
   currentPin = null;
+  activeQuizId = null;
+  activeSlideIndex = 0;
   localStorage.removeItem("teacher_pin");
+  localStorage.removeItem("active_quiz_id");
+  localStorage.removeItem("active_slide_index");
 
   // Show selection screen, hide lobby
   quizSelectionScreen.classList.remove("hidden");
@@ -1758,21 +1762,38 @@ clearSearchBtn.addEventListener("click", () => {
 loadTeacherState();
 renderQuizList();
 
-// Check if there's an active game
-if (currentPin) {
-  // Show game lobby
+// Check if we're coming from the index page
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('from') === 'index') {
+  // Clear any saved state when coming from index
+  currentPin = null;
+  activeQuizId = null;
+  activeSlideIndex = 0;
+  localStorage.removeItem("teacher_pin");
+  localStorage.removeItem("active_quiz_id");
+  localStorage.removeItem("active_slide_index");
+  // Clean up the URL
+  window.history.replaceState({}, document.title, '/teacher');
+}
+
+// Check if there's an active game AND an active quiz
+// Only restore the lobby if both PIN and active quiz exist
+// This prevents skipping the quiz selection screen when coming from index
+if (currentPin && activeQuizId && quizSets[activeQuizId]) {
+  // Show game lobby - we have a valid active session
   quizSelectionScreen.classList.add("hidden");
   gameLobbyScreen.classList.remove("hidden");
   pinCodeEl.textContent = currentPin;
   updateQr();
   pollInterval = setInterval(pollTeacherState, 1000);
-
-  // Restore active quiz display if available
-  if (activeQuizId && quizSets[activeQuizId]) {
-    setActiveQuiz(activeQuizId, activeSlideIndex);
-  }
+  setActiveQuiz(activeQuizId, activeSlideIndex);
 } else {
   // Show quiz selection screen
+  // Clear any stale PIN if there's no active quiz
+  if (currentPin && !activeQuizId) {
+    currentPin = null;
+    localStorage.removeItem("teacher_pin");
+  }
   quizSelectionScreen.classList.remove("hidden");
   gameLobbyScreen.classList.add("hidden");
   renderSelectionScreen();

@@ -114,7 +114,8 @@
             const card = document.getElementById('hostCard');
             card.style.transform = 'scale(0.95)';
             setTimeout(() => {
-                window.location.href = '/teacher';
+                // Add parameter to indicate we're coming from index
+                window.location.href = '/teacher?from=index';
             }, 150);
         }
 
