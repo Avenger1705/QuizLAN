@@ -114,9 +114,13 @@ const qeSlideImageUrl = document.getElementById("qeSlideImageUrl");
 const qeSlideImagePreview = document.getElementById("qeSlideImagePreview");
 const qeSlideDuration = document.getElementById("qeSlideDuration");
 const exportLink = document.getElementById("exportLink");
+const confirmRetakeQuizModal = document.getElementById("confirmRetakeQuizModal");
+const confirmRetakeYes = document.getElementById("confirmRetakeYes");
+const confirmRetakeChangeQuiz = document.getElementById("confirmRetakeChangeQuiz");
 let editorQuizId = null;
 let editorSlideIndex = 0;
 let isEditingExistingQuiz = false;
+let quizJustCompleted = false;
 function ajaxGet(url) {
   return fetch(url).then((r) => r.json());
 }
@@ -330,6 +334,7 @@ function renderSelectionScreen(searchQuery = "") {
 function hostQuiz(quizId) {
   activeQuizId = quizId;
   activeSlideIndex = 0;
+  quizJustCompleted = false; // Reset quiz completion flag for new quiz
   quizSelectionScreen.classList.add("hidden");
   gameLobbyScreen.classList.remove("hidden");
   createNewGame();
@@ -423,6 +428,7 @@ function backToSelection() {
   currentPin = null;
   activeQuizId = null;
   activeSlideIndex = 0;
+  quizJustCompleted = false; // Reset quiz completion flag
   localStorage.removeItem("teacher_pin");
   localStorage.removeItem("active_quiz_id");
   localStorage.removeItem("active_slide_index");
@@ -1462,6 +1468,15 @@ sendQuestionBtn.addEventListener("click", () => {
     showToast("No students have joined yet. Wait for at least one student to join.", "warning");
     return;
   }
+
+  // Check if quiz was just completed AND we're in lobby phase
+  // Only show modal when clicking "Start Question" from lobby after quiz completion
+  if (quizJustCompleted && currentPhase === "lobby") {
+    // Show the retake quiz modal instead of automatically starting
+    confirmRetakeQuizModal.classList.remove("hidden");
+    return;
+  }
+
   if (currentPhase === "results") {
     // Logic to move to next slide automatically
     const quiz = quizSets[activeQuizId];
@@ -1514,6 +1529,7 @@ nextQuestionBtn.addEventListener("click", () => {
   console.log("Has more questions?", activeSlideIndex < quiz.slides.length - 1);
   if (activeSlideIndex < quiz.slides.length - 1) {
     activeSlideIndex += 1;
+    quizJustCompleted = false; // Reset flag when moving to next question
     setActiveQuiz(activeQuizId, activeSlideIndex);
     console.log("Moving to slide:", activeSlideIndex + 1);
     const payload = getActiveSlidePayload();
@@ -1555,10 +1571,26 @@ nextQuestionBtn.addEventListener("click", () => {
         }
       })
       .catch(err => console.error("Failed to save quiz history:", err));
+
+    // End the current question and reset quiz state automatically
     ajaxPost("/api/end_question", { pin: currentPin })
       .then(() => {
-        activeSlideIndex = 0;
-        setActiveQuiz(activeQuizId, 0);
+        // Reset quiz state on backend (clear scores and answers)
+        return ajaxPost("/api/reset_quiz", { pin: currentPin });
+      })
+      .then((resetRes) => {
+        if (resetRes && resetRes.ok) {
+          // Reset local state
+          activeSlideIndex = 0;
+          setActiveQuiz(activeQuizId, 0);
+          currentPhase = "lobby";
+          quizJustCompleted = false; // Don't show modal, quiz is already reset
+
+          // Update UI
+          startQuestionBtn.disabled = false;
+          startQuestionBtn.textContent = "Start Question";
+          console.log("Quiz automatically reset after completion");
+        }
       })
       .catch((err) => console.error(err));
   }
@@ -1689,6 +1721,71 @@ deleteSelectedBtn.addEventListener("click", () => {
 clearSelectionBtn.addEventListener("click", () => {
   clearSelection();
 });
+
+// Retake Quiz Modal Handlers
+confirmRetakeYes.addEventListener("click", () => {
+  // User wants to retake the same quiz
+  confirmRetakeQuizModal.classList.add("hidden");
+  quizJustCompleted = false;
+  activeSlideIndex = 0;
+  setActiveQuiz(activeQuizId, 0);
+
+  // Reset the quiz state on the backend (clear scores and answers)
+  ajaxPost("/api/reset_quiz", { pin: currentPin })
+    .then((resetRes) => {
+      if (!resetRes.ok) {
+        showToast("Failed to reset quiz state", "error");
+        return;
+      }
+
+      // Update local phase and UI state
+      currentPhase = "lobby";
+      startQuestionBtn.disabled = false;
+      startQuestionBtn.textContent = "Start Question";
+      hideTeacherQuestion();
+      hideTeacherScoreboard();
+
+      // Small delay to ensure backend state is fully reset
+      setTimeout(() => {
+        // Start the first question immediately after reset
+        const payload = getActiveSlidePayload();
+        if (payload && payload.text) {
+          ajaxPost("/api/start_question", {
+            pin: currentPin,
+            question: payload,
+          })
+            .then((res) => {
+              if (!res.ok) {
+                showToast(res.error || "Failed to start question", "error");
+              } else {
+                startQuestionBtn.textContent = "Question Running...";
+                startQuestionBtn.disabled = true;
+              }
+            })
+            .catch((err) => console.error(err));
+        }
+      }, 100);
+    })
+    .catch((err) => {
+      console.error("Failed to reset quiz:", err);
+      showToast("Failed to reset quiz", "error");
+    });
+});
+
+confirmRetakeChangeQuiz.addEventListener("click", () => {
+  // User wants to choose a different quiz
+  confirmRetakeQuizModal.classList.add("hidden");
+  quizJustCompleted = false;
+  backToSelection();
+});
+
+// Close modal when clicking backdrop
+confirmRetakeQuizModal.addEventListener("click", (e) => {
+  if (e.target === confirmRetakeQuizModal) {
+    confirmRetakeQuizModal.classList.add("hidden");
+  }
+});
+
 function showSuggestions(query) {
   if (!query) {
     searchSuggestions.classList.add("hidden");

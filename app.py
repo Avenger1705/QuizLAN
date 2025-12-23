@@ -23,6 +23,7 @@ STYLE_DIR = os.path.join(BASE_DIR, "style")
 UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")   
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 PIN_LENGTH = 6
+QUESTION_DURATION = 20
 app = Flask(__name__)
 games: Dict[str, Dict[str, Any]] = {}
 def generate_pin() -> str:
@@ -30,6 +31,7 @@ def generate_pin() -> str:
         pin = "".join(random.choices(string.digits, k=PIN_LENGTH))
         if pin not in games:
             return pin
+
 def calc_points(elapsed: float, duration: int) -> int:
     if elapsed < 0:
         elapsed = 0
@@ -37,6 +39,7 @@ def calc_points(elapsed: float, duration: int) -> int:
         return 0
     factor = max(0.0, min(1.0, (duration - elapsed) / duration))
     return 200 + int(800 * factor)
+
 @app.route("/")
 def root_index():
     return send_from_directory(BASE_DIR, "index.html")
@@ -87,6 +90,7 @@ def api_create_game():
             "teacher_url": teacher_url,
         }
     )
+    
 @app.route("/api/teacher_state", methods=["GET"])
 def api_teacher_state():
     pin = str(request.args.get("pin") or "").strip()
@@ -324,6 +328,33 @@ def api_end_question():
         return jsonify({"ok": False, "error": "Game not found"})
     game["phase"] = "results"
     return jsonify({"ok": True})
+
+@app.route("/api/reset_quiz", methods=["POST"])
+def api_reset_quiz():
+    """Reset quiz state for retaking - clears scores and answers but keeps players"""
+    data = request.get_json(force=True, silent=True) or {}
+    pin = str(data.get("pin") or "").strip()
+    if not pin:
+        return jsonify({"ok": False, "error": "Missing pin"})
+    game = games.get(pin)
+    if not game:
+        return jsonify({"ok": False, "error": "Game not found"})
+    
+    # Reset game state
+    game["phase"] = "lobby"
+    game["current_question"] = None
+    game["current_question_id"] = 0
+    game["question_started_at"] = None
+    
+    # Reset all player scores and answers
+    for player_id, pdata in game["players"].items():
+        pdata["score"] = 0
+        pdata["last_answer"] = None
+        if "answer_history" in pdata:
+            del pdata["answer_history"]
+    
+    return jsonify({"ok": True})
+
 @app.route("/api/submit_answer", methods=["POST"])
 def api_submit_answer():
     data = request.get_json(force=True, silent=True) or {}
