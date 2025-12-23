@@ -427,25 +427,24 @@ def api_generate_qr():
         return jsonify({"ok": False, "error": "Missing data parameter"}), 400
     
     try:
-        # Create QR code instance
+
         qr = qrcode.QRCode(
-            version=1,  # Controls the size of the QR code
+            version=1,  
             error_correction=qrcode.constants.ERROR_CORRECT_L,
             box_size=10,
             border=4,
         )
         
-        # Add data to the QR code
+
         qr.add_data(data)
         qr.make(fit=True)
         
-        # Create an image from the QR code
+
         img = qr.make_image(fill_color="black", back_color="white")
         
-        # Resize to requested size
+
         img = img.resize((size, size), Image.Resampling.LANCZOS)
         
-        # Convert to base64
         buffered = io.BytesIO()
         img.save(buffered, format="PNG")
         img_str = base64.b64encode(buffered.getvalue()).decode()
